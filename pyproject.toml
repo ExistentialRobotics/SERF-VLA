@@ -1,0 +1,64 @@
+[project]
+name = "serf-vla"
+version = "0.1.0"
+description = "Source code for the VLA policy learning of SERF"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+
+dependencies = [
+    "openpi",
+    "chex>=0.1.89",
+    "jax[cuda12]>=0.4.35",
+    "jaxlib>=0.4.35",
+    "flax>=0.10.2",
+    "numpy>=1.26.4",
+    "torch>=2.5.1",
+    "tyro>=0.9.12",
+    "pydantic>=2.10.3",
+    "opencv-python>=4.10.0",
+    "joblib>=1.4.2",
+    "matplotlib>=3.10.0",
+    "scipy>=1.14.1",
+    "pandas>=2.2.3",
+    "pyarrow>=18.1.0",
+    "pyyaml>=6.0",
+    "h5py>=3.12.1",
+    "numpydantic>=1.7.0",
+    "einops>=0.8.0",
+    "etils>=1.10.0",
+    "websockets>=14.1",
+    "orbax-checkpoint>=0.10.3",
+    "tqdm-loggable>=0.2",
+    "lerobot>=0.3.0",
+    "wandb>=0.18.0",
+    "gpustat>=1.1.1",
+    "huggingface-hub[cli]>=0.20.0",
+    "open3d>=0.19.0",
+    "yourdfpy>=0.0.58",
+    "pytest>=8.3.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipykernel>=6.29.5",
+    "jupyter>=1.1.1",
+    "pre-commit>=4.0.1",
+]
+
+[tool.uv.sources]
+openpi = { path = "external/openpi", editable = true }
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["b1k*", "serf_b1k*"]
+
+[tool.setuptools.package-data]
+b1k = ["py.typed"]
+serf_b1k = [
+    "mapping/tracking/config/*.yaml",
+    "mapping/tracking/config/tasks/*.yaml",
+]

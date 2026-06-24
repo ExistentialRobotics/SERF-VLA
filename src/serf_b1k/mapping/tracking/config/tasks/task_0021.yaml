@@ -1,0 +1,14 @@
+# Task-0021 specific overrides
+data_path: "4d_latent_mapping/demonstration_replay/task-0021/episode_00212800.hdf5"
+run_dir: "4d_latent_mapping/models/task-0021/"
+
+instance_tracking:
+  target_instance_names: [dice, teddy_bear, toy_train, board_game]
+  exclude_categories: [background, wall, floors, ceiling, roof, door, window, fence, lawn, electric]
+
+visualization:
+  camera_extrinsic:
+    - [9.81310100e-01, -1.89451990e-01, 3.37406537e-02, -2.06243849e+01]
+    - [-8.49176074e-03, -2.17799070e-01, -9.75956687e-01, 2.60691300e+00]
+    - [1.92245620e-01, 9.57429636e-01, -2.15337208e-01, -7.67255250e+00]
+    - [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]

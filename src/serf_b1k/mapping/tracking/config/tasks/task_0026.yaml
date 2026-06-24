@@ -1,0 +1,14 @@
+# Task-0026 specific overrides
+data_path: "4d_latent_mapping/demonstration_replay/task-0026/episode_00261680.hdf5"
+run_dir: "4d_latent_mapping/models/task-0026/"
+
+instance_tracking:
+  target_instance_names: [bow, swiss_cheese, pillar_candle, butter_cookie, wicker_basket]
+  exclude_categories: [background, wall, floors, ceiling, roof, door, window, fence, lawn, electric]
+
+visualization:
+  camera_extrinsic:
+    - [9.89197677e-01, -1.45946012e-01, 1.37010195e-02, -3.92182342e+00]
+    - [-1.45881660e-02, -1.91014740e-01, -9.81478759e-01, 1.50148995e+00]
+    - [1.45860007e-01, 9.70676635e-01, -1.91080422e-01, -2.23974704e+00]
+    - [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]

@@ -1,0 +1,84 @@
+# =============================================================================
+# Neural Point Tracking Configuration
+# Used by: tracking/neural_point_tracking.py
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Paths (set via --task or --data_path/--run_dir CLI arguments)
+# -----------------------------------------------------------------------------
+# data_path and run_dir are loaded from task-specific configs in tasks/ directory.
+# Use: python neural_point_tracking.py --task 0021
+
+# -----------------------------------------------------------------------------
+# Device
+# -----------------------------------------------------------------------------
+device: "cuda"
+
+# -----------------------------------------------------------------------------
+# Camera Views
+# -----------------------------------------------------------------------------
+views: [head, left_wrist, right_wrist]
+
+# -----------------------------------------------------------------------------
+# Frame Range
+# -----------------------------------------------------------------------------
+frame_range:
+  start_frame: 0          # Starting frame index (0-based)
+  end_frame: -1            # Ending frame index (exclusive, -1 for all)
+
+# -----------------------------------------------------------------------------
+# Tracking Parameters
+# -----------------------------------------------------------------------------
+tracking:
+  buffer_size: 8               # Number of frames fed to CoTracker per call
+  frame_step: 1                # Process every N-th frame within chunk
+  erosion_iters: 2               # Erosion iterations for mask border removal
+  kp_quality_level: 0.01         # Shi-Tomasi minimum corner quality (eigenvalue ratio)
+  kp_min_distance: 10            # Shi-Tomasi minimum pixel distance between keypoints
+  kp_block_size: 7               # Shi-Tomasi corner detection block size
+  max_total_points_per_instance: 20  # Total point budget (keypoints first, random fills remainder)
+  visibility_threshold: 0.8      # CoTracker visibility threshold
+  confidence_threshold: 0.7    # CoTracker confidence threshold
+
+# -----------------------------------------------------------------------------
+# Registration Parameters
+# -----------------------------------------------------------------------------
+registration:
+  fgr_threshold: 0.05             # FGR max correspondence distance (meters)
+  icp_threshold: 0.02            # ICP max correspondence distance (meters)
+  icp_min_points: 2000            # Minimum dense observation points to run ICP
+  icp_max_iterations: 30         # Maximum ICP iterations
+  rescue_icp_max_iterations: 60  # Maximum ICP iterations for rescue ICP
+  min_observed_keypoints: 15     # Minimum keypoints required to update instance
+  stationary_threshold: 0.015     # Skip update if centroid moves less than this (meters)
+  fallback_lookback: 20            # Only retry instances committed within the last N iterations (each iteration = frame_step frames)
+  graph_refine_distance: 0.02    # Instance ID graph refinement neighbor distance (meters)
+  graph_refine_majority_ratio: 0.8  # Instance ID graph refinement majority vote ratio
+  rescue_drift_threshold: 0.3         # Trigger rescue if centroid drift exceeds this (meters)
+  rescue_acceptance_threshold: 0.02    # Accept rescue if post-ICP centroid residual <= this (meters)
+
+# -----------------------------------------------------------------------------
+# Instance Tracking
+# -----------------------------------------------------------------------------
+instance_tracking:
+  # target_instance_names and exclude_categories can be overridden per task in tasks/task_XXXX.yaml
+  # exclude_categories
+
+# -----------------------------------------------------------------------------
+# Visualization
+# -----------------------------------------------------------------------------
+visualization:
+  window_width: 1280
+  window_height: 720
+
+  # camera_extrinsic: set per task in tasks/task_XXXX.yaml
+
+
+# -----------------------------------------------------------------------------
+# Output
+# -----------------------------------------------------------------------------
+output:
+  save_video: true 
+  video_path: "dynamic_pca_iterative.mp4"
+  video_2d_path: "cotracker_2d_visualization.mp4"
+  video_fps: 100

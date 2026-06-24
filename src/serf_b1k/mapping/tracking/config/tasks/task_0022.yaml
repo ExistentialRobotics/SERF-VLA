@@ -1,0 +1,14 @@
+# Task-0021 specific overrides
+data_path: "4d_latent_mapping/demonstration_replay/task-0022/episode_00220700.hdf5"
+run_dir: "4d_latent_mapping/models/task-0022/"
+
+instance_tracking:
+  target_instance_names: [gym_shoe, sandal]
+  exclude_categories: [background, wall, floors, ceiling, roof, door, window, fence, lawn, electric]
+
+visualization:
+  camera_extrinsic:
+    - [8.86353322e-01, 4.63006284e-01, 1.72325780e-03, -3.26379589e-01]
+    - [8.28748038e-02, -1.54986932e-01, -9.84434263e-01, 1.42574891e-01]
+    - [-4.55532168e-01, 8.72699394e-01, -1.75744737e-01, 6.29732448e+00]
+    - [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]

@@ -1,0 +1,65 @@
+defaults:
+  - _self_  # all below configs will override this conf.yaml
+  - robot: r1pro
+  - task: behavior
+  - policy: ???
+
+env_wrapper: 
+  _target_: omnigibson.learning.wrappers.TrackingResWrapper
+policy_name: ???  # filled by policy
+headless: true  # whether to run in headless mode (no GUI)
+eval_on_train_instances: false  # whether to eval on training instances
+eval_instance_ids: null  # specific list of instance ids to eval on, if null test on all instances
+write_video: true # whether we record videos during rollout
+write_third_person_video: false # whether we separately record the fixed third-person view during rollout
+repro_initial_state: true # whether to persist and reuse per-task/instance/episode initial simulator states
+repro_action_log: true # whether to persist and reuse per-task/instance/episode executed action sequences
+replay_mode: auto # none = never replay, auto = replay only when a valid complete log exists, force = require a valid replay log
+replay_action_log_path: null # explicit replay source directory; null keeps per-task/instance/episode auto-discovery
+replay_until_step: null # optional exclusive replay cutoff; switch to policy inference once env step >= this value
+resume_record_suffix: resumed # suffix for new action-log directories when replay is active and we record resumed/fallback actions
+repro_action_chunk_size: 100 # number of step actions to buffer before flushing one chunk file
+record_step_q_score: true # whether to evaluate and log q_score on every simulator step
+partial_scene_load: true  # whether to only load task-relevant rooms for a specific task
+max_steps: null  # max steps per rollout episode, setting to null will use the default value (2 x average human demo completion steps)
+log_path: ???
+test_hidden: false  # [Internal use only] whether to eval on hidden test instances
+
+map_dataset_root_path: datasets/SERF-BEHAVIOR-1K-MAP
+map_input_type: null
+policy_config_name: ???
+num_input_points: null
+execute_in_n_steps: 20
+robot_model_root_path: null
+instance_keep_all_categories: null  # categories whose ALL points are kept (e.g. [dice, teddy_bear]). null = no filtering
+instance_budget_categories: null    # categories that fill remaining point budget via equal sampling (e.g. [bed, chair])
+
+tracking_device: cuda
+tracking_buffer_len: null
+tracking_buffer_size: 14
+tracking_frame_step: 2
+tracking_update_stride: null
+tracking_num_keypoints_per_instance: null
+tracking_erosion_iters: null
+tracking_kp_quality_level: null
+tracking_kp_min_distance: null
+tracking_kp_block_size: null
+tracking_visibility_threshold: null
+tracking_confidence_threshold: null
+tracking_fgr_threshold: null
+tracking_icp_threshold: null
+tracking_icp_min_points: null
+tracking_icp_max_iterations: null
+tracking_rescue_icp_max_iterations: null
+tracking_min_observed_keypoints: null
+tracking_stationary_threshold: 0.02
+tracking_fallback_lookback: 15
+tracking_graph_refine_distance: null
+tracking_graph_refine_majority_ratio: null
+tracking_rescue_drift_threshold: 0.4
+tracking_rescue_acceptance_threshold: null
+tracking_target_instance_names: null
+tracking_exclude_categories: null
+tracking_views: null
+tracking_video_fps: null
+tracking_save_video: false
