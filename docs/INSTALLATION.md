@@ -8,7 +8,7 @@ evaluation on BEHAVIOR-1K.
 Clone SERF-VLA with its submodules:
 
 ```bash
-git clone --recurse-submodules https://github.com/ByeongHyunPak/SERF-VLA.git
+git clone --recurse-submodules https://github.com/ExistentialRobotics/SERF-VLA.git
 cd SERF-VLA
 git submodule update --init --recursive
 ```
