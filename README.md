@@ -12,7 +12,9 @@ This repository contains the policy learning code for SERF-VLA on **[BEHAVIOR-1K
 - [Training VLA policies](#training)
 - [Evaluating policies on BEHAVIOR-1K](#evaluation)
 
-> Note: this repository does **not** include the mapping component of SERF.
+> Note: this repository does **not** include the mapping component of SERF. The
+> mapping component code is available in
+> [SERF-mapping](https://github.com/ExistentialRobotics/SERF-mapping).
 
 ## Repository Status
 
