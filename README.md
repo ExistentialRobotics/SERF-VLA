@@ -22,9 +22,6 @@ Released:
 
 - Setup instructions
 - Policy training and evaluation code
-
-Coming soon:
-
 - Fine-tuned PI0.5 checkpoints
 - SERF-VLA checkpoints
 
@@ -58,11 +55,14 @@ datasets/
 
 ## Checkpoints
 
-Before training SERF-VLA policies, download the PI0.5 checkpoint
-pretrained on the 50 tasks from the 2025 BEHAVIOR Challenge. We use the
-checkpoint released by the first-place challenge solution,
-[behavior-1k-solution](https://github.com/IliaLarchenko/behavior-1k-solution/tree/main),
-as the initialization for our experiments.
+This project uses two types of checkpoints:
+
+1. A PI0.5 checkpoint pretrained on 50 BEHAVIOR-1K tasks, used as the initialization for training.
+2. Released PI0.5 baseline and SERF-VLA checkpoints, used for evaluation or reproduction.
+
+### Initialization Checkpoint
+
+Before training SERF-VLA policies, download the PI0.5 checkpoint pretrained on the 50 tasks from the 2025 BEHAVIOR Challenge. We use the checkpoint released by the first-place challenge solution, [behavior-1k-solution](https://github.com/IliaLarchenko/behavior-1k-solution/tree/main), as the initialization for our experiments.
 
 Run the following command from the repository root:
 
@@ -82,11 +82,66 @@ print(f"Checkpoint downloaded to: {ckpt_dir}")
 PY
 ```
 
-This places the checkpoint under `checkpoints/behavior-1k-solution`, matching
-the default paths used by the training and evaluation configs.
+This places the checkpoint under `checkpoints/behavior-1k-solution`, matching the default paths used by the training configs.
 
-SERF-VLA checkpoints and our fine-tuned PI0.5 checkpoints will be added to this
-section when they are ready for release.
+### Released Checkpoints
+
+We also release the PI0.5 baseline and SERF-VLA checkpoints used in our BEHAVIOR-1K experiments:
+
+* [`byeonghyunpak/SERF-VLA`](https://huggingface.co/byeonghyunpak/SERF-VLA)
+
+Run the following command from the repository root:
+
+```bash
+uv run python - <<'PY'
+from huggingface_hub import snapshot_download
+
+ckpt_dir = "checkpoints/serf-vla-behavior-b1k"
+
+snapshot_download(
+    repo_id="byeonghyunpak/SERF-VLA",
+    repo_type="model",
+    local_dir=ckpt_dir,
+)
+
+print(f"Checkpoints downloaded to: {ckpt_dir}")
+PY
+```
+
+This places the released checkpoints under `checkpoints/serf-vla-behavior-b1k`.
+
+To download a specific checkpoint folder only, use `allow_patterns`:
+
+```bash
+uv run python - <<'PY'
+from huggingface_hub import snapshot_download
+
+ckpt_dir = "checkpoints/serf-vla-behavior-b1k"
+
+snapshot_download(
+    repo_id="byeonghyunpak/SERF-VLA",
+    repo_type="model",
+    local_dir=ckpt_dir,
+    allow_patterns=[
+        "pi_serf_behavior_b1k_fast--4d_env_robot_feat_map--50t_lora--task-0021/**"
+    ],
+)
+
+print(f"Checkpoint downloaded to: {ckpt_dir}")
+PY
+```
+
+The released checkpoints include:
+
+| Folder                                                                  | Model          | Representation                       | Task        |
+| ----------------------------------------------------------------------- | -------------- | ------------------------------------ | ----------- |
+| `pi_behavior_b1k_fast--50t_lora--task-0021`                             | PI0.5 baseline | 2D image observation                 | `task-0021` |
+| `pi_behavior_b1k_fast--50t_lora--task-0022`                             | PI0.5 baseline | 2D image observation                 | `task-0022` |
+| `pi_behavior_b1k_fast--50t_lora--task-0026`                             | PI0.5 baseline | 2D image observation                 | `task-0026` |
+| `pi_serf_behavior_b1k_fast--4d_env_robot_feat_map--50t_lora--task-0021` | SERF-VLA       | 4D environment and robot feature map | `task-0021` |
+| `pi_serf_behavior_b1k_fast--4d_env_robot_feat_map--50t_lora--task-0022` | SERF-VLA       | 4D environment and robot feature map | `task-0022` |
+| `pi_serf_behavior_b1k_fast--4d_env_robot_feat_map--50t_lora--task-0026` | SERF-VLA       | 4D environment and robot feature map | `task-0026` |
+
 
 ## Training
 
