@@ -11,7 +11,6 @@ from openpi_client.image_tools import resize_with_pad
 from b1k.policies.b1k_policy import extract_state_from_proprio
 from b1k.models.pi_behavior_config import TASK_NUM_STAGES
 from b1k.shared.correction_rules import apply_correction_rules, check_gripper_variation
-from omnigibson.learning.utils.eval_utils import PROPRIOCEPTION_INDICES
 
 logger = logging.getLogger(__name__)
 

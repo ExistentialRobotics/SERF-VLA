@@ -34,8 +34,9 @@ GOAL = """    (:goal
     )"""
 
 
-RELATIVE_PROBLEM_PATH = Path(
-    "bddl/bddl/activity_definitions/collecting_childrens_toys/problem0.bddl"
+RELATIVE_PROBLEM_PATHS = (
+    Path("bddl3/bddl/activity_definitions/collecting_childrens_toys/problem0.bddl"),
+    Path("bddl/bddl/activity_definitions/collecting_childrens_toys/problem0.bddl"),
 )
 
 
@@ -99,9 +100,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    problem_path = args.behavior_root / RELATIVE_PROBLEM_PATH
-    if not problem_path.exists():
-        raise SystemExit(f"[ERROR] BDDL file not found: {problem_path}")
+    problem_path = next(
+        (args.behavior_root / path for path in RELATIVE_PROBLEM_PATHS if (args.behavior_root / path).exists()),
+        None,
+    )
+    if problem_path is None:
+        searched = ", ".join(str(args.behavior_root / path) for path in RELATIVE_PROBLEM_PATHS)
+        raise SystemExit(f"[ERROR] BDDL file not found; searched: {searched}")
 
     patch_file(problem_path, check=args.check)
 

@@ -36,14 +36,9 @@ echo "Installing B1K solution package and all dependencies (including OpenPI)...
 echo "This creates a lock file and ensures consistent installations."
 uv sync --extra dev
 
-# Install BEHAVIOR-1K dependencies (bddl and OmniGibson)
-# These need to be installed separately as they're not in our pyproject.toml
-echo "Installing BEHAVIOR-1K evaluation dependencies..."
-cd "BEHAVIOR-1K"
-chmod +x setup.sh || true
-uv pip install -e bddl
-uv pip install -e OmniGibson[eval]
-cd ..
+# BEHAVIOR-1K v3.9.1 uses a newer LeRobot dependency than OpenPI. Keep its
+# simulator dependencies in the separate `behavior` Conda environment described
+# in docs/INSTALLATION.md instead of mutating this locked training environment.
 
 # Setup Jupyter kernel for development
 echo "Setting up Jupyter kernel..."

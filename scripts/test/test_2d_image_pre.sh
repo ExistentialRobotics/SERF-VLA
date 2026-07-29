@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# The NVIDIA Isaac Sim EULA was accepted during this environment setup.
+export OMNI_KIT_ACCEPT_EULA="${OMNI_KIT_ACCEPT_EULA:-YES}"
+
 # Example scripts:
 #   bash scripts/test/test_2d_image_pre.sh
 #   bash scripts/test/test_2d_image_pre.sh --task-id 0026
 #   bash scripts/test/test_2d_image_pre.sh --logging-tag pretrained_eval --write-video false -- eval_instance_ids='[0,1,2]'
 
-CONDA_ENV_PYTHON_PATH="/mnt/hdd/miniconda3/envs/behavior/bin/python"
+CONDA_ENV_PYTHON_PATH="/home/sunghwan/miniforge3/envs/behavior/bin/python"
 
 TASK_ID="0021"
 CONFIG_NAME="pi_behavior_b1k_fast"
@@ -16,6 +19,7 @@ CHECKPOINT_PATH="checkpoints/behavior-1k-solution/behavior_50t_checkpoint"
 RECORD_STEP_Q_SCORE=true
 WRITE_VIDEO=true
 WRITE_THIRD_PERSON_VIDEO=true
+HEADLESS=false
 SERVER_LOG="logs/_server/serve_b1k_pretrained.log"
 EVAL_ARGS=()
 
@@ -31,6 +35,7 @@ Options:
   --record-step-q-score BOOL      Enable or disable step Q-score recording.
   --write-video BOOL              Enable or disable first-person video writing.
   --write-third-person-video BOOL Enable or disable third-person video writing.
+  --headless BOOL                 Run without the Isaac Sim viewer (default: false).
   --server-log PATH               Policy server log file.
   --                              Pass remaining args to OmniGibson eval.py.
 EOF
@@ -89,6 +94,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --write-third-person-video)
             WRITE_THIRD_PERSON_VIDEO="$2"
+            shift 2
+            ;;
+        --headless)
+            HEADLESS="$2"
             shift 2
             ;;
         --server-log)
@@ -153,15 +162,55 @@ fi
 
 echo "[INFO] Running evaluation..."
 set +e
-"${CONDA_ENV_PYTHON_PATH}" BEHAVIOR-1K/OmniGibson/omnigibson/learning/eval.py \
-    log_path="./logs/${LOGGING_NAME}" \
-    policy=websocket \
-    model.host=localhost \
-    task.name="${TASK_NAME}" \
-    write_video="${WRITE_VIDEO}" \
-    write_third_person_video="${WRITE_THIRD_PERSON_VIDEO}" \
-    record_step_q_score="${RECORD_STEP_Q_SCORE}" \
-    "${EVAL_ARGS[@]}"
+if [[ -f BEHAVIOR-1K/OmniGibson/omnigibson/eval/eval.py ]]; then
+    # BEHAVIOR-1K v3.9+: translate the legacy instance override accepted by
+    # this wrapper to the new argparse-based evaluator.
+    INSTANCE_IDS=(0)
+    MODE="train"
+    MAX_STEPS_ARGS=()
+    for arg in "${EVAL_ARGS[@]}"; do
+        case "${arg}" in
+            eval_instance_ids=*)
+                raw_ids="${arg#eval_instance_ids=}"; raw_ids="${raw_ids#[}"; raw_ids="${raw_ids%]}"
+                IFS=',' read -r -a INSTANCE_IDS <<< "${raw_ids}"
+                ;;
+            mode=*) MODE="${arg#mode=}" ;;
+            max_steps=*) MAX_STEPS_ARGS=(--max-steps "${arg#max_steps=}") ;;
+            *)
+                echo "[ERROR] Unsupported v3.9.1 evaluator argument: ${arg}" >&2
+                exit 2
+                ;;
+        esac
+    done
+
+    VIDEO_ARG="--no-write-video"
+    if [[ "${WRITE_VIDEO}" == "true" ]]; then VIDEO_ARG="--write-video"; fi
+
+    HEADLESS_ARG="--no-headless"
+    if [[ "${HEADLESS}" == "true" ]]; then HEADLESS_ARG="--headless"; fi
+
+    "${CONDA_ENV_PYTHON_PATH}" -m omnigibson.eval.eval \
+        --task-name "${TASK_NAME}" \
+        --robot-config BEHAVIOR-1K/OmniGibson/omnigibson/eval/r1pro.yaml \
+        --mode "${MODE}" \
+        --instance-indices "${INSTANCE_IDS[@]}" \
+        "${MAX_STEPS_ARGS[@]}" \
+        --host localhost \
+        --port 8000 \
+        --output-dir "./logs/${LOGGING_NAME}" \
+        "${VIDEO_ARG}" \
+        "${HEADLESS_ARG}"
+else
+    "${CONDA_ENV_PYTHON_PATH}" BEHAVIOR-1K/OmniGibson/omnigibson/learning/eval.py \
+        log_path="./logs/${LOGGING_NAME}" \
+        policy=websocket \
+        model.host=localhost \
+        task.name="${TASK_NAME}" \
+        write_video="${WRITE_VIDEO}" \
+        write_third_person_video="${WRITE_THIRD_PERSON_VIDEO}" \
+        record_step_q_score="${RECORD_STEP_Q_SCORE}" \
+        "${EVAL_ARGS[@]}"
+fi
 
 EVAL_EXIT_CODE=$?
 set -e

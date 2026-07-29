@@ -12,8 +12,7 @@ import tyro
 os.environ.setdefault('XLA_PYTHON_CLIENT_MEM_FRACTION', '0.5')  # Use 50% of GPU memory
 os.environ.setdefault('XLA_PYTHON_CLIENT_ALLOCATOR', 'platform')  # Platform allocator
 
-from omnigibson.learning.utils.network_utils import WebsocketPolicyServer
-from omnigibson.learning.datas import BehaviorLerobotDatasetMetadata
+from openpi.serving.websocket_b1k_server import WebsocketPolicyServer
 
 from openpi.policies import policy as _policy
 

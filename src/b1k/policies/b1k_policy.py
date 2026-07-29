@@ -9,10 +9,27 @@ import dataclasses
 
 import einops
 import numpy as np
+from collections import OrderedDict
 
 from openpi import transforms
 from openpi.models import model as _model
-from omnigibson.learning.utils.eval_utils import PROPRIOCEPTION_INDICES
+
+
+# BEHAVIOR-1K v3.9.1 R1Pro proprioception layout. Keeping the small set of
+# slices used by the policy here avoids importing Isaac Sim in the policy
+# server process; Isaac Sim belongs to the separate `behavior` environment.
+PROPRIOCEPTION_INDICES = {
+    "R1Pro": OrderedDict(
+        {
+            "base_qvel": np.s_[0:3],
+            "arm_left_qpos": np.s_[3:10],
+            "gripper_left_qpos": np.s_[24:26],
+            "arm_right_qpos": np.s_[28:35],
+            "gripper_right_qpos": np.s_[49:51],
+            "trunk_qpos": np.s_[53:57],
+        }
+    )
+}
 
 
 def make_b1k_example() -> dict:

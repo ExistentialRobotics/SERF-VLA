@@ -22,6 +22,13 @@ SERF-VLA uses two Python environments:
   serving.
 - A BEHAVIOR-1K Conda environment for OmniGibson evaluation.
 
+This repository pins BEHAVIOR-1K `v3.9.1`, the latest stable release. After
+initializing the submodules, verify the checkout with:
+
+```bash
+git -C BEHAVIOR-1K describe --tags --exact-match
+```
+
 ### Training Environment
 
 Set up the project `uv` environment from the SERF-VLA repository root:
@@ -40,34 +47,41 @@ Set up the BEHAVIOR-1K Conda environment for evaluation:
 
 ```bash
 cd BEHAVIOR-1K
-bash setup.sh --new-env --accept-conda-tos
-
-conda activate behavior
-bash setup.sh --omnigibson --bddl --joylo --eval \
-  --accept-nvidia-eula --confirm-no-conda
-
-bash setup.sh --datasets --accept-dataset-tos
+bash setup.sh --new-env behavior --omnigibson --bddl --joylo --eval
 ```
 
-The BEHAVIOR-1K setup script can leave incompatible `numpy` / `scipy`
-packages in the conda environment. Reset them before installing the SERF
-evaluation dependencies:
+The installer asks you to accept the Conda Terms of Service and NVIDIA Isaac
+Sim EULA. For an unattended installation, review those terms first and add
+`--accept-conda-tos --accept-nvidia-eula` to the command.
+
+Download the simulator assets and 2026 challenge task instances separately.
+This step asks you to accept the BEHAVIOR Data Bundle license:
 
 ```bash
 conda activate behavior
-python -m pip uninstall -y numpy scipy
-python -m pip uninstall -y numpy scipy
-conda install -y -c conda-forge "numpy=1.26.4" "scipy=1.15.2"
+cd BEHAVIOR-1K
+bash setup.sh --dataset
 ```
+
+For an unattended dataset download, review the license first and add
+`--accept-dataset-tos`.
 
 Install the additional Python dependencies used by the SERF evaluation scripts:
 
 ```bash
 conda activate behavior
-pip install viser open-clip-torch plotly scikit-image scikit-learn tensorboard tqdm yourdfpy 
+python -m pip install viser open-clip-torch plotly scikit-image scikit-learn tensorboard tqdm yourdfpy
 ```
 
 Run the OmniGibson evaluation commands with this `behavior` Conda environment.
+
+> **Compatibility note:** BEHAVIOR-1K `v3.9.1` replaced the 2025
+> `omnigibson.learning` interface with `omnigibson.eval` and upgraded its
+> LeRobot dependency. The environments are therefore intentionally isolated:
+> the project `uv` environment retains the OpenPI-compatible LeRobot version,
+> while the `behavior` Conda environment contains the latest simulator. The
+> pretrained 2D wrapper supports the new evaluator; the feature-map rollout
+> scripts still target the archived 2025 API and require a separate port.
 
 ## Patch BEHAVIOR-1K Task 21 Goal
 
